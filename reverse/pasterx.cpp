@@ -603,62 +603,48 @@ struct Camera
 	Vector3 Rotation;
 	Vector3 Location;
 }; Camera vCamera;
-
-Camera GetCamera(__int64 a1)
+struct CamewaDescwipsion
 {
+	Vector3 Location;
+	Vector3 Rotation;
+	float FieldOfView;
+	char Useless[0x18];
+}; Camera vCamera;
+CamewaDescwipsion GetCamera()
+{
+	char v1; // r8
+	CamewaDescwipsion ViewPoint = ReadBizzy<CamewaDescwipsion>(base_address + VIEW_POINT);
+	BYTE* v2 = (BYTE*)&ViewPoint;
+	int i; // edx
+	__int64 result; // rax
 
-	Camera FGC_Camera;
-	__int64 ViewStates;
-	__int64 ViewState;
+	v1 = 0x40;
+	for (i = 0; i < 0x40; ++i)
+	{
+		*v2 ^= v1;
+		result = (unsigned int)(i + 0x17);
+		v1 += i + 0x17;
+		v2++;
+	}
 
-	ViewStates = ReadBizzy<__int64>(Localplayer + 0xD0);
-	ViewState = ReadBizzy<__int64>( ViewStates + 8);
-
-	FGC_Camera.FieldOfView = ReadBizzy<float>(PlayerController + 0x38C) * 90.f;
-
-	FGC_Camera.Rotation.x = ReadBizzy<double>( ViewState + 0x9C0);
-	__int64 ViewportClient = ReadBizzy<__int64>(Localplayer + 0x78);
-	if (!ViewportClient) return FGC_Camera;
-	__int64 AudioDevice = ReadBizzy<__int64>( ViewportClient + 0x98);
-	if (!AudioDevice) return FGC_Camera;
-	__int64 FListener = ReadBizzy<__int64>( AudioDevice + 0x1E0);
-	if (!FListener) return FGC_Camera;
-	FQuat Listener = ReadBizzy<FQuat>( FListener);
-	FGC_Camera.Rotation.y = Rotator(&Listener).Yaw;
-
-	FGC_Camera.Location = ReadBizzy<Vector3>( ReadBizzy<uintptr_t>(Uworld + 0x110));
-	return FGC_Camera;
-
-	//v6 = driver.read<__int64>(Localplayer + 0x70);
-	//v7 = driver.read<__int64>(v6 + 0x98);
-	//v8 = driver.read<__int64>(v7 + 0xF8);
-	//FGC_Camera.Location = driver.read<Vector3>(Uworld + 0x100); // 0x20
-
-	return FGC_Camera;
+	return ViewPoint;
 }
-
 
 
 Vector3 ProjectWorldToScreen(Vector3 WorldLocation)
 {
-	Camera vCamera = GetCamera(Rootcomp);
-	vCamera.Rotation.x = (asin(vCamera.Rotation.x)) * (180.0 / M_PI);
-
-
-	D3DMATRIX tempMatrix = Matrix(vCamera.Rotation);
-
+	CamewaDescwipsion ViewPoint = GetCamera();
+	D3DMATRIX tempMatrix = Matrix(ViewPoint.Rotation);
 	Vector3 vAxisX = Vector3(tempMatrix.m[0][0], tempMatrix.m[0][1], tempMatrix.m[0][2]);
 	Vector3 vAxisY = Vector3(tempMatrix.m[1][0], tempMatrix.m[1][1], tempMatrix.m[1][2]);
 	Vector3 vAxisZ = Vector3(tempMatrix.m[2][0], tempMatrix.m[2][1], tempMatrix.m[2][2]);
-
-	Vector3 vDelta = WorldLocation - vCamera.Location;
+	Vector3 vDelta = WorldLocation - ViewPoint.Location;
 	Vector3 vTransformed = Vector3(vDelta.Dot(vAxisY), vDelta.Dot(vAxisZ), vDelta.Dot(vAxisX));
-
 	if (vTransformed.z < 1.f)
 		vTransformed.z = 1.f;
-
-	return Vector3((Width / 2.0f) + vTransformed.x * (((Width / 2.0f) / tanf(vCamera.FieldOfView * (float)M_PI / 360.f))) / vTransformed.z, (Height / 2.0f) - vTransformed.y * (((Width / 2.0f) / tanf(vCamera.FieldOfView * (float)M_PI / 360.f))) / vTransformed.z, 0);
+	return Vector3((Width / 2.0f) + vTransformed.x * (((Width / 2.0f) / tanf(ViewPoint.FieldOfView * (float)M_PI / 360.f))) / vTransformed.z, (Height / 2.0f) - vTransformed.y * (((Width / 2.0f) / tanf(ViewPoint.FieldOfView * (float)M_PI / 360.f))) / vTransformed.z, 0);
 }
+
 
 
 
