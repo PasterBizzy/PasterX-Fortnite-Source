@@ -403,8 +403,8 @@ namespace SpoofRuntime {
 
 Vector3 GetBoneWithRotation(DWORD_PTR mesh, int id)
 {
-	uintptr_t ABoneArray = ReadBizzy<uintptr_t>(mesh + 0x5f0);
-	if (!ABoneArray) ABoneArray = ReadBizzy<uintptr_t>( mesh + 0x5f0 + 0x10);
+	uintptr_t ABoneArray = ReadBizzy<uintptr_t>(mesh + 0x600);
+	if (!ABoneArray) ABoneArray = ReadBizzy<uintptr_t>( mesh + 0x648);
 
 	FTransform ComponentToWorld = ReadBizzy<FTransform>( mesh + 0x240);
 
