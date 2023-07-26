@@ -8,4 +8,4 @@ Seen Many Pastes of The Pasterx Source So i Thought I Would Update It
 - SNAPLINES
 - OTHER SHIT (I Cba)
 - Will Update The Source And Upload Compiled Version Every Update!
-- Join My Discord If You Need Help https://discord.gg/printf
+- Join This Discord If You Need Help https://discord.gg/d2mN4hpA
