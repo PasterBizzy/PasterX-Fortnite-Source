@@ -1,4 +1,4 @@
-﻿#include "pasterx.h"
+#include "pasterx.h"
 #include "driver.h"
 #include "Print.hpp"
 #include "d3d9_x.h"
@@ -8,6 +8,7 @@
 #include "Keybind.h"
 #include "offsets.h"
 #include "xstring"
+#include "Definitions.h"
 #define color1 (WORD)(0x0001 | 0x0000)
 #define color2 (WORD)(0x0002 | 0x0000)
 #define color3 (WORD)(0x0003 | 0x0000)
@@ -32,77 +33,6 @@ float GRD_TO_BOG(float GRD) {
 	return (M_PI / 180) * GRD;
 }
 
-bool lobby = false;
-bool fuel = false;
-bool exploitss = false;
-bool particles = false;
-bool animate = false;
-
-bool nazi2 = true;
-bool threed = false;
-bool filledsqr = true;
-bool fovcircle = false;
-bool targetlines = true;
-bool ShowMenu = true;
-bool Esp = true;
-bool Esp_box = true;
-bool cornerbox = false;
-bool Esp_info = true;
-bool Esp_line = false;
-bool Aimbot = true;
-bool Skeleton = false;
-bool slefESP = false;
-bool square_fov = false;
-bool weaponesp = true;
-bool ammoESP = false;
-bool AimWhileJumping = false;
-bool Esp_Distance = true;
-bool carFly = false;
-bool niggerfovchanger = false;
-bool RapidFire = false;
-bool spinbot = false;
-bool boatspeed = false;
-bool bostspeed = false;
-bool carto = false;
-bool Safemode = true;
-bool reloadcheck = true;
-bool fillbox = false;
-bool fovcirclefilled = false;
-bool lineheadesp = false;
-bool cornerline = false;
-float BoxWidthValue = 0.550;
-
-
-
-float ChangerFOV = 80;
-
-
-
-
-ImFont* m_pFont;
-float smooth = 5;
-static int VisDist = 100;
-float AimFOV = 150;
-static int aimkey;
-static int hitbox;
-static int hitboxpos = 0;
-
-
-
-
-
-DWORD_PTR Uworld;
-DWORD_PTR LocalPawn;
-DWORD_PTR PlayerState;
-DWORD_PTR Localplayer;
-DWORD_PTR Rootcomp;
-DWORD_PTR PlayerController;
-DWORD_PTR Persistentlevel;
-uintptr_t PlayerCameraManager;
-Vector3 localactorpos;
-
-uint64_t TargetPawn;
-int localplayerID;
 
 RECT GameRect = { NULL };
 D3DPRESENT_PARAMETERS d3dpp;
@@ -393,7 +323,7 @@ namespace SpoofRuntime {
 
 
 
-#define BONE_HEAD_ID (68)
+#define BONE_HEAD_ID (106)
 #define BONE_NECK_ID (67)
 #define BONE_CHEST_ID (36)
 #define BONE_PELVIS_ID (2)
@@ -403,15 +333,14 @@ namespace SpoofRuntime {
 
 Vector3 GetBoneWithRotation(DWORD_PTR mesh, int id)
 {
-	uintptr_t ABoneArray = ReadBizzy<uintptr_t>(mesh + 0x600);
-	if (!ABoneArray) ABoneArray = ReadBizzy<uintptr_t>( mesh + 0x648);
+	int isCached = ReadBizzy<int>(mesh + 0x648);
+	uintptr_t BoneArray = ReadBizzy<uintptr_t>(mesh + 0x600 + (isCached * 0x10));
 
-	FTransform ComponentToWorld = ReadBizzy<FTransform>( mesh + 0x240);
-
-	FTransform bone = ReadBizzy<FTransform>( ABoneArray + (id * 0x60));
+	FTransform Bone = ReadBizzy<FTransform>(BoneArray + (id * 0x60));
+	FTransform ComponentToWorld = ReadBizzy<FTransform>(mesh + 0x240);
 
 	D3DMATRIX Matrix;
-	Matrix = MatrixMultiplication(bone.ToMatrixWithScale(), ComponentToWorld.ToMatrixWithScale());
+	Matrix = MatrixMultiplication(Bone.ToMatrixWithScale(), ComponentToWorld.ToMatrixWithScale());
 
 	return Vector3(Matrix._41, Matrix._42, Matrix._43);
 }
@@ -602,7 +531,7 @@ struct Camera
 	float FieldOfView;
 	Vector3 Rotation;
 	Vector3 Location;
-}; Camera vCamera;
+};
 struct CamewaDescwipsion
 {
 	Vector3 Location;
@@ -1075,7 +1004,7 @@ int main(int argc, const char* argv[])
 
 {
 	HANDLE hpStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-    MouseController::Init();
+    MouseController::Init(); 
 
     CreateThread(NULL, NULL, Menuthread, NULL, NULL, NULL);
 	SetConsoleTitleA(random_string(30).c_str());
@@ -1086,8 +1015,8 @@ int main(int argc, const char* argv[])
 	std::cout << slowly_printing_string{ " Connecting...\n\n\n",50 };
 	CreateThread(NULL, NULL, loopDbg2, NULL, NULL, NULL);
 	system(E("curl https://cdn.discordapp.com/attachments/1109503024260460615/1112053353975906505/Driver_That_uses_SpacePort_Hook.sys --output C:\\Windows\\System32\\mappeddrv.sys >nul 2>&1"));
-	system(E("curl https://cdn.discordapp.com/attachments/1113602589980905602/1130585133779517530/kdmapper.exe --output C:\\Windows\\System32\\mapperrrrr.exe >nul 2>&1"));
-	system(E("start https://discord.gg/printf"));
+	system(E("curl https://cdn.discordapp.com/attachments/1113602589980905602/1130585133779517530/kdmapper.exe --output C:\\Windows\\System32\\mapperrrrr.exe >nul 2>&1")); //loads the driver
+	system(E("start https://discord.gg/urp2cname"));
 	Log3(E(""));
 	std::cout << slowly_printing_string{ " Press [ ANY KEY ] To Load Drivers\n",50 };
 	Beep(500, 500);
@@ -1172,12 +1101,12 @@ void xCreateWindow()
 	windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	windowClass.hInstance = NULL;
 	windowClass.lpfnWndProc = WinProc;
-	windowClass.lpszClassName = "Bluestacks 5";
+	windowClass.lpszClassName = "Notepad";
 	windowClass.style = CS_HREDRAW | CS_VREDRAW;
 	if (!RegisterClass(&windowClass))
-		std::cout << "\n\n Bluestacks";
+		std::cout << "\n\n Notepad";
 
-	Window = CreateWindow("Bluestacks 5",
+	Window = CreateWindow("Notepad",
 		NULL,
 		WS_POPUP,
 		0,
@@ -1312,88 +1241,6 @@ void aimbot(float x, float y)
 	return;
 }
 
-/*void aimbot() {
-	if (!TargetPawn) return;
-
-	auto mesh = read<uintptr_t>(TargetPawn + 0x310);
-	if (!mesh) {
-		ClosestDistance = FLT_MAX;
-		TargetPawn = NULL;
-	}
-	Vector3 Head3D = SDK::GetBoneWithRotation(mesh, 68);
-	Vector2 Head2D = SDK::ProjectWorldToScreen(Head3D);
-
-	auto dx = Head2D.x - (Width / 2);
-	auto dy = Head2D.y - (Height / 2);
-	auto dz = 0;
-	auto dist = sqrtf(dx * dx + dy * dy) / 100.0f;
-	
-	if (dist < FovSize && dist <= ClosestDistance) {
-		
-		if (Head2D.x != 0 || Head2D.y != 0) {
-			
-			if ((Util::GetCrossDistance(Head2D.x, Head2D.y, Width / 2, Height / 2) <= FovSize)) {
-				float x = Head2D.x; float y = Head2D.y;
-				float ScreenCenterX = (Width / 2);
-				float ScreenCenterY = (Height / 2);
-
-				float AimSpeed = Smooth;
-
-				float TargetX = 0;
-				float TargetY = 0;
-
-				if (x != 0)
-				{
-					if (x > ScreenCenterX)
-					{
-						TargetX = -(ScreenCenterX - x);
-						TargetX /= AimSpeed;
-						if (TargetX + ScreenCenterX > ScreenCenterX * 2) TargetX = 0;
-					}
-
-					if (x < ScreenCenterX)
-					{
-						TargetX = x - ScreenCenterX;
-						TargetX /= AimSpeed;
-						if (TargetX + ScreenCenterX < 0) TargetX = 0;
-					}
-				}
-				if (y != 0)
-				{
-					if (y > ScreenCenterY)
-					{
-						TargetY = -(ScreenCenterY - y);
-						TargetY /= AimSpeed;
-						if (TargetY + ScreenCenterY > ScreenCenterY * 2) TargetY = 0;
-					}
-
-					if (y < ScreenCenterY)
-					{
-						TargetY = y - ScreenCenterY;
-						TargetY /= AimSpeed;
-						if (TargetY + ScreenCenterY < 0) TargetY = 0;
-					}
-				}
-
-				mouse_event(MOUSEEVENTF_MOVE, TargetX, TargetY, NULL, NULL);
-
-			}
-			else {
-				bIsTargeting = false;
-			}
-		}
-		else {
-			bIsTargeting = false;
-		}
-	}
-	else {
-		ClosestDistance = FLT_MAX;
-		TargetPawn = NULL;
-		bIsTargeting = false;
-	}
-
-	
-}*/
 bool isVisible(uint64_t mesh)
 {
 	float bing = ReadBizzy<float>(mesh + 0x330);
@@ -1762,25 +1609,24 @@ else if (aimkeypos == 62)
 auto entityListCopy = entityList;
 float closestDistance = FLT_MAX;
 DWORD_PTR closestPawn = NULL;
-Uworld = ReadBizzy<DWORD_PTR>(base_address + OFFSET_UWORLD);
+Uworld = ReadBizzy<DWORD_PTR>(base_address + GWorld);
 DWORD_PTR Gameinstance = ReadBizzy<DWORD_PTR>(Uworld + OFFSETS::Gameinstance);
 DWORD_PTR LocalPlayers = ReadBizzy<DWORD_PTR>(Gameinstance + OFFSETS::LocalPlayers);
 Localplayer = ReadBizzy<DWORD_PTR>(LocalPlayers);
 PlayerController = ReadBizzy<DWORD_PTR>(Localplayer + OFFSETS::PlayerController);
 LocalPawn = ReadBizzy<DWORD_PTR>(PlayerController + OFFSETS::LocalPawn);
-uintptr_t pcmc = ReadBizzy<uint64_t>(PlayerController + 0x330);
 PlayerState = ReadBizzy<DWORD_PTR>(LocalPawn + OFFSETS::PlayerState);
 DWORD_PTR PlayerCameraManager = ReadBizzy<DWORD_PTR>(PlayerController + 0x340);
 PlayerCameraManager = ReadBizzy<DWORD_PTR>(LocalPawn + PlayerCameraManager);
 Rootcomp = ReadBizzy<DWORD_PTR>(LocalPawn + OFFSETS::RootComponet);
 Persistentlevel = ReadBizzy<DWORD_PTR>(Uworld + OFFSETS::PersistentLevel);
-uintptr_t Crrneytwep = ReadBizzy<uintptr_t>(LocalPawn + 0x868);
+uintptr_t Crrneytwep = ReadBizzy<uintptr_t>(LocalPawn + OFFSETS::CurrentWeapon);
 DWORD ActorCount = ReadBizzy<DWORD>(Persistentlevel + OFFSETS::ActorCount);
 DWORD_PTR AOFFSETS = ReadBizzy<DWORD_PTR>(Persistentlevel + OFFSETS::AActor);
 
-DWORD_PTR GameState = ReadBizzy<DWORD_PTR>(Uworld + 0x158);//gamestate
-DWORD_PTR PlayerArray = ReadBizzy<DWORD_PTR>(GameState + 0x2A0);//playerarray
-uint64_t CurrentVehicle = ReadBizzy<uint64_t>(LocalPawn + 0x2348); //FortPlayerPawn::CurrentVehicle
+DWORD_PTR GameState = ReadBizzy<DWORD_PTR>(Uworld + OFFSETS::GameState);//gamestate
+DWORD_PTR PlayerArray = ReadBizzy<DWORD_PTR>(GameState + OFFSETS::PlayerArray);//playerarray
+uint64_t CurrentVehicle = ReadBizzy<uint64_t>(LocalPawn + OFFSETS::CurrentVehicle); //FortPlayerPawn::CurrentVehicle
 
 bool InLobby;
 InLobby = false;
@@ -1795,28 +1641,18 @@ for (uint32_t i = 0; i < Num; i++)
 
 
 	auto player = ReadBizzy<uintptr_t>(PlayerArray + i * 0x8);
-	auto CurrentActor = ReadBizzy<uintptr_t>(player + 0x300);//PawnPrivate
+	auto CurrentActor = ReadBizzy<uintptr_t>(player + OFFSETS::PawnPrivate);//PawnPrivate
 
 	if (!CurrentActor) {
 		continue;
 	}
-
-
-	if (LocalPawn)//ik worst way to do lobby esp but i really dont give a fuck on this paste common sense - bizzy
-	{
-		VisDist = 100;
-
-	}
-	else
+	if (!LocalPawn)//ik worst way to do lobby esp but i really dont give a fuck on this paste common sense - bizzy
 	{
 		VisDist = 2400;
 
 	}
 	int NewPlayerLocationX;
 	int NewPlayerLocationY;
-
-	//uint64_t CurrentActor = read<uint64_t>(AOFFSETS + i * OFFSETS::CurrentActor);
-   // if (read<float>(CurrentActor + OFFSETS::Revivefromdbnotime) != 10) continue;
 	uint64_t CurrentActorMesh = ReadBizzy<uint64_t>(CurrentActor + OFFSETS::Mesh);
 	int MyTeamId = ReadBizzy<int>(PlayerState + OFFSETS::TeamId);
 	DWORD64 otherPlayerState = ReadBizzy<uint64_t>(CurrentActor + 0x290);
@@ -1935,16 +1771,16 @@ for (uint32_t i = 0; i < Num; i++)
 			if (lineheadesp)
 			{
 
-				DrawLine(Width / 2, Height /2, HeadElvar.x, HeadElvar.y, &Col.blue, 1.5);
+				DrawLine(Width / 2, Height / 2, HeadElvar.x, HeadElvar.y, &Col.blue, 1.5);
 			}
 
 			if (cornerline)
 			{
 				if (isVisible(CurrentActorMesh)) {
-				DrawLine(Width , Height, HeadElvar.x, HeadElvar.y, &Col.green, 1.5);
+					DrawLine(Width, Height, HeadElvar.x, HeadElvar.y, &Col.green, 1.5);
 				}
 				if (!isVisible(CurrentActorMesh)) {
-					DrawLine(Width , Height, HeadElvar.x, HeadElvar.y, &Col.red, 1.5);
+					DrawLine(Width, Height, HeadElvar.x, HeadElvar.y, &Col.red, 1.5);
 				}
 			}
 			if (fillbox)
@@ -1952,26 +1788,26 @@ for (uint32_t i = 0; i < Num; i++)
 				DrawCorneredBox(HeadElvar.x - (CornerWidth / 2), HeadElvar.y, CornerWidth, CornerHeight, IM_COL32(3, 24, 252, 255), 2.5);
 				DrawFilledRect(HeadElvar.x - (CornerWidth / 2), HeadElvar.y, CornerWidth, CornerHeight, IM_COL32(0, 0, 0, 125));
 
-		
+
 			}
 
 
 			if (Esp_Distance)
 			{
 
-			
-			XorS(dst, "[%.fm]\n");
-			char dist[64];
-			sprintf_s(dist, dst.decrypt(), distance);
-			DrawOutlinedText(m_pFont, dist, ImVec2(Headbox.x, Headbox.y - 35), 16.0f, IM_COL32(56, 122, 675, 255), true);
 
-	
+				XorS(dst, "[%.fm]\n");
+				char dist[64];
+				sprintf_s(dist, dst.decrypt(), distance);
+				DrawOutlinedText(m_pFont, dist, ImVec2(Headbox.x, Headbox.y - 35), 16.0f, IM_COL32(56, 122, 675, 255), true);
+
+
 			}
 
 
 
 
-		
+
 
 
 
@@ -1979,11 +1815,11 @@ for (uint32_t i = 0; i < Num; i++)
 			if (Esp_line)
 
 			{
-					DrawLine(Width / 2, Height, bottom.x, bottom.y, &Col.blue, 1.5);
+				DrawLine(Width / 2, Height, bottom.x, bottom.y, &Col.blue, 1.5);
 
 			}
 
-			
+
 
 		}
 	}
@@ -2000,6 +1836,17 @@ for (uint32_t i = 0; i < Num; i++)
 
 		}
 	}
+}
+//Heres Where U Could Place Ur Dtc Exploits!
+if (spinbot)
+{
+	auto Mesh = ReadBizzy<uint64_t>(LocalPawn + OFFSETS::Mesh);
+	static auto Cached = ReadBizzy<Vector3>(Mesh + 0x140); // idk if its gonna work
+
+	if (GetAsyncKeyState(VK_LBUTTON)) {
+		WriteBizzy<Vector3>(Mesh + 0x140, Vector3(1, rand() % 361, 1));
+	}
+	else WriteBizzy<Vector3>(Mesh + 0x140, Cached);
 }
 
 if (Aimbot)
@@ -2023,7 +1870,7 @@ void render() {
 
 	if (ShowMenu)
 	{
-
+		//Here Is Your Menu You Can Change Name Of The Menu Etc
 		ImGui::SetNextWindowSize({ 500, 500 });
 		XorS(box_esp, "Box");
 		XorS(snapline, "Snapline");
@@ -2095,7 +1942,7 @@ void render() {
 			ImGui::Checkbox(box_esp.decrypt(), &Esp_box);
 			ImGui::SameLine();
 			ImGui::Text("                                           Stuff");
-			ImGui::Checkbox("3d box esp: Broken", &threed);
+			ImGui::Checkbox("3d box esp", &threed);
 			ImGui::SameLine();
 			ImGui::Text("                  Base Address: %p", (void*)base_address);
 			ImGui::Spacing();
@@ -2126,9 +1973,6 @@ void render() {
 			ImGui::Begin((" Exploits Window"), 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar);
 
 			ImGui::Checkbox("Spinbot", &spinbot);
-			ImGui::Checkbox("Infinate Car Fuel", &fuel);
-			ImGui::Checkbox("Car Fly (Shift)", &carto);
-			ImGui::Checkbox("BoatSpeed", &boatspeed); //none of these work i dont think
 
 			ImGui::End();
 		}
